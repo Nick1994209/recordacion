@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Добавить рекорд - Книга рекордов{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">📝 Добавить новый рекорд</h1>
+    <p class="page-subtitle">Поделитесь своим достижением с миром</p>
+</div>
+
+<div class="form-section">
+    <form method="post" enctype="multipart/form-data" class="record-form">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label for="{{ form.title.id_for_label }}" class="form-label">
+                {{ form.title.label }} <span class="required">*</span>
+            </label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="field-errors">
+                    {% for error in form.title.errors %}
+                        <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}" class="form-label">
+                {{ form.description.label }} <span class="required">*</span>
+            </label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <div class="field-errors">
+                    {% for error in form.description.errors %}
+                        <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.preview_image.id_for_label }}" class="form-label">
+                {{ form.preview_image.label }}
+            </label>
+            {{ form.preview_image }}
+            <small class="form-help">Это изображение будет показано в превью рекорда</small>
+            {% if form.preview_image.errors %}
+                <div class="field-errors">
+                    {% for error in form.preview_image.errors %}
+                        <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="images" class="form-label">
+                Картинки для поста
+            </label>
+            <input 
+                type="file" 
+                id="images" 
+                name="images" 
+                multiple 
+                class="form-control"
+                accept="image/*"
+            >
+            <small class="form-help">Можно выбрать несколько изображений для подробного описания рекорда</small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-large">
+                🚀 Отправить рекорд
+            </button>
+            <a href="{% url 'records:home' %}" class="btn btn-secondary btn-large">
+                Отмена
+            </a>
+        </div>
+    </form>
+</div>
+
+<div class="info-section">
+    <div class="info-card">
+        <h3>ℹ️ Важная информация</h3>
+        <ul>
+            <li>Все рекорды проходят модерацию перед публикацией</li>
+            <li>Поля "Название" и "Описание" являются обязательными</li>
+            <li>Поддерживаются форматы изображений: JPG, PNG, GIF</li>
+            <li>Максимальный размер файла: 10 МБ</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

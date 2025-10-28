@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ record.title }} - Книга рекордов{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <a href="{% url 'records:home' %}" class="back-link">← Вернуться к списку</a>
+    <h1 class="page-title">{{ record.title }}</h1>
+    <p class="page-subtitle">📅 {{ record.created_at|date:"d.m.Y H:i" }}</p>
+</div>
+
+<div class="record-detail-section">
+    <div class="record-detail-card">
+        {% if record.preview_image %}
+            <div class="record-preview">
+                <img src="{{ record.preview_image.url }}" alt="{{ record.title }}" class="preview-image">
+            </div>
+        {% endif %}
+        
+        <div class="record-info">
+            <h2 class="record-title">{{ record.title }}</h2>
+            
+            <div class="record-description">
+                <h3>Описание</h3>
+                <p>{{ record.description|linebreaks }}</p>
+            </div>
+            
+            <div class="record-meta">
+                <div class="meta-item">
+                    <span class="meta-label">📅 Дата создания:</span>
+                    <span class="meta-value">{{ record.created_at|date:"d.m.Y H:i" }}</span>
+                </div>
+                
+                {% if record.updated_at != record.created_at %}
+                    <div class="meta-item">
+                        <span class="meta-label">🔄 Дата обновления:</span>
+                        <span class="meta-value">{{ record.updated_at|date:"d.m.Y H:i" }}</span>
+                    </div>
+                {% endif %}
+                
+                <div class="meta-item">
+                    <span class="meta-label">✅ Статус:</span>
+                    <span class="meta-value">
+                        {% if record.is_approved %}
+                            <span class="status-approved">Одобрен</span>
+                        {% else %}
+                            <span class="status-pending">На рассмотрении</span>
+                        {% endif %}
+                    </span>
+                </div>
+                
+                {% if record.approved_by %}
+                    <div class="meta-item">
+                        <span class="meta-label">👤 Одобрил:</span>
+                        <span class="meta-value">{{ record.approved_by.username }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    {% if record.images.all %}
+        <div class="record-images">
+            <h3>📸 Изображения рекорда</h3>
+            <div class="images-grid">
+                {% for image in record.images.all %}
+                    <div class="image-item">
+                        <img src="{{ image.image.url }}" alt="Изображение {{ forloop.counter }}" class="record-image">
+                        <div class="image-caption">
+                            Изображение {{ forloop.counter }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="actions-section">
+    <a href="{% url 'records:home' %}" class="btn btn-primary">
+        🏠 На главную
+    </a>
+    <a href="{% url 'records:create_record' %}" class="btn btn-secondary">
+        ➕ Добавить свой рекорд
+    </a>
+</div>
+{% endblock %}

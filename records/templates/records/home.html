@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Книга рекордов{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">🏆 Книга рекордов</h1>
+    <p class="page-subtitle">Удивительные достижения и рекорды</p>
+</div>
+
+<div class="filters-section">
+    <h2 class="filters-title">Фильтры и сортировка</h2>
+    <form method="get" class="filters-form">
+        <div class="filter-group">
+            <label for="title" class="filter-label">Поиск по названию:</label>
+            <input 
+                type="text" 
+                id="title" 
+                name="title" 
+                value="{{ title_filter }}" 
+                class="filter-input"
+                placeholder="Введите название рекорда"
+            >
+        </div>
+        
+        <div class="filter-group">
+            <label for="sort" class="filter-label">Сортировка по дате:</label>
+            <select id="sort" name="sort" class="filter-select">
+                <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>
+                    Сначала новые
+                </option>
+                <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>
+                    Сначала старые
+                </option>
+            </select>
+        </div>
+        
+        <div class="filter-actions">
+            <button type="submit" class="btn btn-primary">Применить</button>
+            <a href="{% url 'records:home' %}" class="btn btn-secondary">Сбросить</a>
+        </div>
+    </form>
+</div>
+
+<div class="records-section">
+    {% if page_obj %}
+        <div class="records-grid">
+            {% for record in page_obj %}
+                <div class="record-card">
+                    <div class="record-image">
+                        {% if record.preview_image %}
+                            <img src="{{ record.preview_image.url }}" alt="{{ record.title }}">
+                        {% else %}
+                            <div class="no-image">📷</div>
+                        {% endif %}
+                    </div>
+                    <div class="record-content">
+                        <h3 class="record-title">{{ record.title }}</h3>
+                        <p class="record-date">
+                            📅 {{ record.created_at|date:"d.m.Y" }}
+                        </p>
+                        <a href="{% url 'records:record_detail' record.id %}" class="btn btn-outline">
+                            Подробнее
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if title_filter %}&title={{ title_filter }}{% endif %}{% if sort_order %}&sort={{ sort_order }}{% endif %}" class="pagination-link">« Первая</a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if title_filter %}&title={{ title_filter }}{% endif %}{% if sort_order %}&sort={{ sort_order }}{% endif %}" class="pagination-link">‹ Предыдущая</a>
+                {% endif %}
+
+                <span class="pagination-info">
+                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if title_filter %}&title={{ title_filter }}{% endif %}{% if sort_order %}&sort={{ sort_order }}{% endif %}" class="pagination-link">Следующая ›</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if title_filter %}&title={{ title_filter }}{% endif %}{% if sort_order %}&sort={{ sort_order }}{% endif %}" class="pagination-link">Последняя »</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="no-records">
+            <h3>Рекордов не найдено</h3>
+            <p>Попробуйте изменить параметры фильтрации или <a href="{% url 'records:create_record' %}">добавьте новый рекорд</a>.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
