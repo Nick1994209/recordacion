@@ -35,6 +35,8 @@ USER django
 # Сollectstatic файлы (выполняется от имени пользователя django)
 RUN python manage.py collectstatic --noinput
 
+EXPOSE 8000
+
 # Устанавливаем точку входа
 ENTRYPOINT ["./entrypoint.sh"]
 
