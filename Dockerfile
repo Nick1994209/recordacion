@@ -35,10 +35,10 @@ USER django
 # Сollectstatic файлы (выполняется от имени пользователя django)
 RUN python manage.py collectstatic --noinput
 
-EXPOSE 8000
+EXPOSE 8080
 
 # Устанавливаем точку входа
 ENTRYPOINT ["./entrypoint.sh"]
 
 # Команда по умолчанию для запуска сервера
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8080"]
